@@ -25,7 +25,7 @@ $ ai install ext.ptime
 ```
 
 
-# Download a murattal audio
+# Get daily prayer time
 - For AI users, sample commands:
 
 ```
