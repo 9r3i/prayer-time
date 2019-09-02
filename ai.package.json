@@ -1,0 +1,45 @@
+{
+  "neoadzan":{
+    "name":"neoadzan",
+    "version":"1.0.0",
+    "type":"lib",
+    "contains":[
+      "cahyadsn\/neoadzan\/Adzan.php",
+      "cahyadsn\/neoadzan\/NewAdzan.php",
+      "cahyadsn\/neoadzan\/TimeTraits.php",
+      "cahyadsn\/neoadzan\/TrigonometriTraits.php",
+      "cahyadsn\/neoadzan\/wilayah.json"
+    ],
+    "authors":[
+      "Abu Ayyub"
+    ]
+  },
+  "adzanhelper":{
+    "name":"adzanhelper",
+    "version":"1.0.0",
+    "type":"lib",
+    "contains":[
+      "adzanHelper.php"
+    ],
+    "authors":[
+      "Abu Ayyub"
+    ]
+  },
+  "ext.ptime":{
+    "name":"ptime",
+    "version":"1.0.0",
+    "type":"ext",
+    "contains":[
+      "ptime.php"
+    ],
+    "requires":[
+      "adzanhelper",
+      "neoadzan"
+    ],
+    "authors":[
+      "Abu Ayyub"
+    ]
+  }
+}
+
+
