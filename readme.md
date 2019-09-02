@@ -9,7 +9,7 @@
 
 # What is Prayer Time?
 - Prayer Time is muslim daily prayer time indicator.
-- Basically, prayer time indicator is based on Sun, so the clicking time is always changed.
+- Basically, prayer time indicator is based on Sun, so the clicking time is always changing.
 
 
 # Dedicated to
