@@ -5,7 +5,7 @@
     "type":"lib",
     "contains":[
       "cahyadsn\/neoadzan\/Adzan.php",
-      "cahyadsn\/neoadzan\/NewAdzan.php",
+      "cahyadsn\/neoadzan\/NeoAdzan.php",
       "cahyadsn\/neoadzan\/TimeTraits.php",
       "cahyadsn\/neoadzan\/TrigonometriTraits.php",
       "cahyadsn\/neoadzan\/wilayah.json"
