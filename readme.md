@@ -35,3 +35,8 @@ $ ai ptime daily [int:date] [int:month] [int:year]
 - Use ```$ ai ptime help``` for more detail.
 
 
+# Screenshot
+
+[![Screenshot](https://github.com/9r3i/prayer-time/blob/master/terminal-sample-cropped.png)]
+
+
