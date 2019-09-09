@@ -12,8 +12,8 @@
 - Basically, prayer time indicator is based on Sun, so the clicking time is always changing.
 
 
-# Dedicated to
-- Mas [Cahya Dwi Satrian](https://github.com/cahyadsn), many thanks for [neoadzan](https://github.com/cahyadsn/neoadzan) library. Today, I finish this console version, eventhought it's for AI Console System only.
+# Thanks to
+- Mas [Cahya Dwi Satrian](https://github.com/cahyadsn), many thanks for [neoadzan](https://github.com/cahyadsn/neoadzan) library.
 
 
 # Installation
@@ -37,6 +37,6 @@ $ ai ptime daily [int:date] [int:month] [int:year]
 
 # Screenshot
 
-[![Screenshot](https://github.com/9r3i/prayer-time/blob/master/terminal-sample-cropped.png)]
+[![Screenshot](https://github.com/9r3i/prayer-time/blob/master/terminal-sample.png)]
 
 

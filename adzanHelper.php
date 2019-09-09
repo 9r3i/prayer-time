@@ -9,9 +9,11 @@
  *   o AI Console System version 3.3.x or higher
  *   o cahyadsn/neoadzan library (ripped)
  *     -- must be located at cahyadsn directory
+ * changes:
+ *   o add method addWilayah as version 1.1.0
  */
 class adzanHelper{
-  const version='1.0.0';
+  const version='1.1.0';
   private $dir;
   private $wilayah;
   private $keys;
@@ -56,6 +58,42 @@ class adzanHelper{
     $this->keys=['id','name','latitude','longitude','timezone'];
     /* return this object */
     return $this;
+  }
+  /* add wilayah */
+  public function addWilayah($data=null){
+    /* check error */
+    if($this->error){return false;}
+    /* check data */
+    if(!is_array($data)
+      ||!isset($data['name'],$data['timezone'])
+      ||!isset($data['latitude'],$data['longitude'])){
+      $this->error='Invalid array data.';
+      return false;
+    }
+    /* prepare new data */
+    $new=[
+      (string)time(),
+      $data['name'],
+      $data['latitude'],
+      $data['longitude'],
+      $data['timezone'],
+    ];
+    /* push data to general wilayah */
+    $this->wilayah[]=$new;
+    /* save wilayah
+     * warning: this is gonna overwrite file "wilayah.json"
+     *          so, I create backup file for it to cover a failure
+     */
+    $backup=TEMP.'wilayah.json.tmp';
+    $origin=$this->dir.'wilayah.json';
+    @copy($origin,$backup);
+    if(!@file_put_contents($origin,@json_encode($this->wilayah))){
+      @rename($backup,$origin);
+      $this->error='Failed to save wilayah.';
+      return false;
+    }@unlink($backup);
+    /* return as true */
+    return true;
   }
   /* get wilayah */
   public function getWilayah($index=null){

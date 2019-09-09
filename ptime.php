@@ -6,10 +6,43 @@
  * https://github.com/9r3i
  * started at september 2nd 2019
  * require: AI library -- adzanHelper
+ * change: 
+ * - add method addlocation (version 1.1.0)
  */
 class ptime{
-  const version='1.0.0';
+  const version='1.1.0';
   const info='Prayer time console.';
+  /* add custom location */
+  public function addlocation(string $ll='',string $name='My Place',string $tz='7'){
+    /* initialize helper */
+    $helper=new adzanHelper;
+    if($helper->error){
+      return ai::error($helper->error);
+    }
+    /* check latitude and longitude */
+    if(empty($ll)
+      ||!preg_match('/^(\-?\d+(\.\d+)?),(\-?\d+(\.\d+)?)$/',$ll,$a)){
+      return ai::error('Invalid latitude and longitude.');
+    }
+    /* check timezone */
+    if(!preg_match('/^\-?\d+$/',$tz)){
+      return ai::error('Invalid timezone.');
+    }
+    /* prepare data object */
+    $data=[
+      'name'=>$name,
+      'latitude'=>floatval($a[1]),
+      'longitude'=>floatval($a[3]),
+      'timezone'=>intval($tz),
+    ];
+    /* save location */
+    $save=$helper->addWilayah($data);
+    if(!$save||$helper->error){
+      return ai::error($helper->error);
+    }
+    /* return print as table row */
+    return aiBar::rowCLI($data);
+  }
   /* get monthly prayer time */
   public function monthly(string $month='',string $year=''){
     /* initialize helper */
@@ -124,14 +157,17 @@ Version {$version}
   $ AI PTIME <option>
 
 Options:
-  LOCATION   Set current location.
-  DAILY      Show prayer time daily.
-  MONTHLY    Show prayer time monthly.
+  LOCATION     Set current location.
+  DAILY        Get daily prayer time.
+  MONTHLY      Get monthly prayer time.
+  ADDLOCATION  Add custom location.
   
 Example:
   $ AI PTIME LOCATION <string:location>
   $ AI PTIME DAILY [int:date:today] [int:month] [int:year]
   $ AI PTIME MONTHLY [int:month] [int:year]
+  $ AI PTIME ADDLOCATION <string:lat,long> [place:"My Place"] [timezone:7]
+  
 EOD;
   }
 }
