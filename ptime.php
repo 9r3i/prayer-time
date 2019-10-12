@@ -7,10 +7,14 @@
  * started at september 2nd 2019
  * require: AI library -- adzanHelper
  * change: 
- * - add method addlocation (version 1.1.0)
+ * - version 1.1.0
+ *   - add method addlocation
+ * - version 1.2.0 - 191012
+ *   - calculate next adzan for daily
+ *   - add method today alias of daily
  */
 class ptime{
-  const version='1.1.0';
+  const version='1.2.0';
   const info='Prayer time console.';
   /* add custom location */
   public function addlocation(string $ll='',string $name='My Place',string $tz='7'){
@@ -84,6 +88,10 @@ class ptime{
     return "Location: {$location}\r\n"
       .aiBar::tableCLI($jadwal,'tgl,shubuh,dhuhur,ashar,maghrib,isya');
   }
+  /* get today prayer time -- alias of daily */
+  public function today(string $date='',string $month='',string $year=''){
+    return $this->daily($date,$month,$year);
+  }
   /* get daily prayer time */
   public function daily(string $date='',string $month='',string $year=''){
     /* initialize helper */
@@ -117,9 +125,52 @@ class ptime{
     }
     /* prepare location name */
     $location=$wil->name;
+    /* prepare today jadwal */
+    $jadwal=$get['data']['jadwal'];
+    $prayerName='';
+    $nextAdzan=0;
+    $dayName=date('l').' (Today)';
+    /* calculate next adzan */
+    foreach($jadwal as $k=>$v){
+      if(strtotime($v)>time()){
+        $prayerName=$k;
+        $nextAdzan=strtotime($v)-time();
+        break;
+      }
+    }
+    /* check for next day of shubuh */
+    if(!$nextAdzan){
+      /* generate daily prayer time by date */
+      $ndate=intval($date)+1;
+      $get=$neoadzan->getDaily($year,$month,$ndate);
+      /* check data get */
+      if(is_array($get)&&isset($get['data'],$get['data']['jadwal'])){
+        $jadwal=$get['data']['jadwal'];
+        $jadwalNext=$jadwal['shubuh'];
+        $prayerName='shubuh';
+        $atime=strtotime("$year-$month-$ndate ".$jadwalNext);
+        $dayName=date('l',$atime).' (Tomorrow)';
+        $nextAdzan=$atime-time();
+      }
+    }
+    /* convert time to hour and minute */
+    $nextETA='';
+    if($nextAdzan){
+      $hour=floor($nextAdzan/3600);
+      $def=$nextAdzan%3600;
+      $minute=floor($def/60);
+      $second=$def%60;
+      $eta='';
+      if($hour){$eta.="{$hour}h ";}
+      if($minute){$eta.="{$minute}m ";}
+      $eta.="{$second}s";
+      $nextETA="Next: {$eta} to {$prayerName}.";
+    }
     /* return output table */
     return "Location: {$location}\r\n"
-      .aiBar::rowCLI($get['data']['jadwal']);
+      ."Day: {$dayName}\r\n"
+      .aiBar::rowCLI($jadwal)
+      .$nextETA;
   }
   /* set current location */
   public function location(string $keyword=''){
@@ -158,12 +209,14 @@ Version {$version}
 
 Options:
   LOCATION     Set current location.
+  TODAY        Alias of daily.
   DAILY        Get daily prayer time.
   MONTHLY      Get monthly prayer time.
   ADDLOCATION  Add custom location.
   
 Example:
   $ AI PTIME LOCATION <string:location>
+  $ AI PTIME TODAY [int:date:today] [int:month] [int:year]
   $ AI PTIME DAILY [int:date:today] [int:month] [int:year]
   $ AI PTIME MONTHLY [int:month] [int:year]
   $ AI PTIME ADDLOCATION <string:lat,long> [place:"My Place"] [timezone:7]
