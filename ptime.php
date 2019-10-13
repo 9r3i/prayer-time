@@ -10,11 +10,12 @@
  * - version 1.1.0
  *   - add method addlocation
  * - version 1.2.0 - 191012
- *   - calculate next adzan for daily
- *   - add method today alias of daily
+ *   - rollback for misleading method
+ * - version 1.3.0 - 191013
+ *   - add method today and calculate next adzan
  */
 class ptime{
-  const version='1.2.0';
+  const version='1.3.0';
   const info='Prayer time console.';
   /* add custom location */
   public function addlocation(string $ll='',string $name='My Place',string $tz='7'){
@@ -89,20 +90,16 @@ class ptime{
       .aiBar::tableCLI($jadwal,'tgl,shubuh,dhuhur,ashar,maghrib,isya');
   }
   /* get today prayer time -- alias of daily */
-  public function today(string $date='',string $month='',string $year=''){
-    return $this->daily($date,$month,$year);
-  }
-  /* get daily prayer time */
-  public function daily(string $date='',string $month='',string $year=''){
+  public function today(){
     /* initialize helper */
     $helper=new adzanHelper;
     if($helper->error){
       return ai::error($helper->error);
     }
     /* reset input argument */
-    $date=preg_match('/^\d{1,2}$/',$date)?$date:date('j');
-    $month=preg_match('/^\d{1,2}$/',$month)?$month:date('n');
-    $year=preg_match('/^\d{4}$/',$year)?$year:date('Y');
+    $date=date('j');
+    $month=date('n');
+    $year=date('Y');
     /* get index location */
     $index=gc::get('ADZAN_INDEX_LOCATION');
     if(gc::error()){
@@ -172,6 +169,43 @@ class ptime{
       .aiBar::rowCLI($jadwal)
       .$nextETA;
   }
+  /* get daily prayer time */
+  public function daily(string $date='',string $month='',string $year=''){
+    /* initialize helper */
+    $helper=new adzanHelper;
+    if($helper->error){
+      return ai::error($helper->error);
+    }
+    /* reset input argument */
+    $date=preg_match('/^\d{1,2}$/',$date)?$date:date('j');
+    $month=preg_match('/^\d{1,2}$/',$month)?$month:date('n');
+    $year=preg_match('/^\d{4}$/',$year)?$year:date('Y');
+    /* get index location */
+    $index=gc::get('ADZAN_INDEX_LOCATION');
+    if(gc::error()){
+      return ai::error('Location is not set.');
+    }
+    /* get wilayah by index */
+    $wil=$helper->getWilayah($index);
+    if(!$wil||$helper->error){
+      exit("Error: Failed to get location data.\r\n");
+    }
+    /* setup latitude, longitude and timezone */
+    $neoadzan=new NeoAdzan();
+    $neoadzan->setLatLng($wil->latitude,$wil->longitude);
+    $neoadzan->setTimeZone($wil->timezone);
+    /* generate daily prayer time by date */
+    $get=$neoadzan->getDaily($year,$month,$date);
+    /* check data get */
+    if(!is_array($get)||!isset($get['data'],$get['data']['jadwal'])){
+      return ai::error('Failed to generate prayer time.');
+    }
+    /* prepare location name */
+    $location=$wil->name;
+    /* return output table */
+    return "Location: {$location}\r\n"
+      .aiBar::rowCLI($get['data']['jadwal']);
+  }
   /* set current location */
   public function location(string $keyword=''){
     /* initialize helper */
@@ -209,14 +243,14 @@ Version {$version}
 
 Options:
   LOCATION     Set current location.
-  TODAY        Alias of daily.
+  TODAY        Get today prayer time and calculate next adzan.
   DAILY        Get daily prayer time.
   MONTHLY      Get monthly prayer time.
   ADDLOCATION  Add custom location.
   
 Example:
   $ AI PTIME LOCATION <string:location>
-  $ AI PTIME TODAY [int:date:today] [int:month] [int:year]
+  $ AI PTIME TODAY
   $ AI PTIME DAILY [int:date:today] [int:month] [int:year]
   $ AI PTIME MONTHLY [int:month] [int:year]
   $ AI PTIME ADDLOCATION <string:lat,long> [place:"My Place"] [timezone:7]
