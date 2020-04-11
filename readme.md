@@ -29,7 +29,9 @@ $ ai install ext.ptime
 - For AI users, sample commands:
 
 ```
-$ ai ptime daily [int:date] [int:month] [int:year]
+$ ai ptime today
+$ ai ptime daily [int:date:today] [int:month:thisMonth] [int:year:thisYear]
+$ ai ptime monthly [int:month:thisMonth] [int:year:thisYear]
 ```
 
 - Use ```$ ai ptime help``` for more detail.
