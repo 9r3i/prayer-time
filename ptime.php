@@ -5,8 +5,10 @@
  * authored by 9r3i
  * https://github.com/9r3i
  * started at september 2nd 2019
- * require: AI library -- adzanHelper
- * change: 
+ * requires:
+ *  - AI library -- adzanHelper
+ *  - AI extension ME as version 1.5.0
+ * changes: 
  * - version 1.1.0
  *   - add method addlocation
  * - version 1.2.0 - 191012
@@ -18,9 +20,12 @@
  *   - add constant gcKey
  *   - add current adzan at method today
  *   - retype parameter types, as AI version 4.3.0
+ * - version 1.5.0 - 200427
+ *   - add timer parameter in method today to the next adzan
+ *     - this timer require another extension: ai intall ext.me
  */
 class ptime{
-  const version='1.4.0';
+  const version='1.5.0';
   const info='Prayer time console.';
   const gcKey='ADZAN_INDEX_LOCATION';
   /* add custom location */
@@ -96,7 +101,7 @@ class ptime{
       .aiBar::tableCLI($jadwal,'tgl,shubuh,dhuhur,ashar,maghrib,isya');
   }
   /* get today prayer time -- alias of daily */
-  public function today(){
+  public function today(int $usingTimer=0){
     /* initialize helper */
     $helper=new adzanHelper;
     if($helper->error){
@@ -134,10 +139,17 @@ class ptime{
     $nextAdzan=0;
     $dayName=date('l').' (Today)';
     $currentAdzan='';
+    $currentAdzanLength=[
+      'shubuh'=>60,
+      'dhuhur'=>60,
+      'ashar'=>60,
+      'maghrib'=>60,
+      'isya'=>60,
+    ];
     /* calculate next adzan */
     foreach($jadwal as $k=>$v){
       $gab=time()-strtotime($v);
-      if($gab>0&&$gab<30*60){
+      if($gab>0&&$gab<45*60){
         $ago=ceil($gab/60);
         $currentAdzan="\r\nCurrent: {$k}, {$ago} minutes ago.";
       }
@@ -175,11 +187,25 @@ class ptime{
       $eta.="{$second}s";
       $nextETA="Next: {$eta} to {$prayerName}.";
     }
-    /* return output table */
-    return "Location: {$location}\r\n"
+    /* print output the table */
+    aiBar::print(
+      "Location: {$location}\r\n"
       ."Day: {$dayName}\r\n"
       .aiBar::rowCLI($jadwal)
-      .$nextETA.$currentAdzan;
+      .$nextETA.$currentAdzan
+      ."\r\n"
+    );
+    /* using timer
+     * @require: - ext.me
+     *             - install: ai install ext.me
+     *           - storage: audio/adzan.wav
+     */
+    if($usingTimer){
+      $loadTimer=ai::loadExts('me');
+      if(!$loadTimer){
+        return ai::error('Failed to load timer extension.');
+      }return (new me)->timer($nextAdzan,'second','adzan.wav');
+    }return "";
   }
   /* get daily prayer time */
   public function daily(int $date=0,int $month=0,int $year=0){
