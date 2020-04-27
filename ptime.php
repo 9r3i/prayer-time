@@ -23,9 +23,11 @@
  * - version 1.5.0 - 200427
  *   - add timer parameter in method today to the next adzan
  *     - this timer require another extension: ai intall ext.me
+ * - version 1.5.1 - 200427
+ *   - forget put $currentAdzanLength in the spot, :D -- i was in hurry, wkwkwk :v
  */
 class ptime{
-  const version='1.5.0';
+  const version='1.5.1';
   const info='Prayer time console.';
   const gcKey='ADZAN_INDEX_LOCATION';
   /* add custom location */
@@ -141,15 +143,15 @@ class ptime{
     $currentAdzan='';
     $currentAdzanLength=[
       'shubuh'=>60,
-      'dhuhur'=>60,
-      'ashar'=>60,
+      'dhuhur'=>150,
+      'ashar'=>90,
       'maghrib'=>60,
-      'isya'=>60,
+      'isya'=>287,
     ];
     /* calculate next adzan */
     foreach($jadwal as $k=>$v){
       $gab=time()-strtotime($v);
-      if($gab>0&&$gab<45*60){
+      if($gab>0&&$gab<$currentAdzanLength[$k]*60){
         $ago=ceil($gab/60);
         $currentAdzan="\r\nCurrent: {$k}, {$ago} minutes ago.";
       }
