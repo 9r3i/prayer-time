@@ -25,9 +25,11 @@
  *     - this timer require another extension: ai intall ext.me
  * - version 1.5.1 - 200427
  *   - forget put $currentAdzanLength in the spot, :D -- i was in hurry, wkwkwk :v
+ * - version 1.5.2 - 200506
+ *   - fix current adzan output time ago
  */
 class ptime{
-  const version='1.5.1';
+  const version='1.5.2';
   const info='Prayer time console.';
   const gcKey='ADZAN_INDEX_LOCATION';
   /* add custom location */
@@ -152,8 +154,15 @@ class ptime{
     foreach($jadwal as $k=>$v){
       $gab=time()-strtotime($v);
       if($gab>0&&$gab<$currentAdzanLength[$k]*60){
-        $ago=ceil($gab/60);
-        $currentAdzan="\r\nCurrent: {$k}, {$ago} minutes ago.";
+        $hour=floor($gab/3600);
+        $def=$gab%3600;
+        $minute=floor($def/60);
+        $second=$def%60;
+        $ago='';
+        if($hour){$ago.="{$hour}h ";}
+        if($minute){$ago.="{$minute}m ";}
+        if($second){$ago.="{$second}s";}
+        $currentAdzan="\r\nCurrent: {$k}, {$ago} ago.";
       }
       if(strtotime($v)>time()){
         $prayerName=$k;
@@ -186,7 +195,7 @@ class ptime{
       $eta='';
       if($hour){$eta.="{$hour}h ";}
       if($minute){$eta.="{$minute}m ";}
-      $eta.="{$second}s";
+      if($second){$eta.="{$second}s";}
       $nextETA="Next: {$eta} to {$prayerName}.";
     }
     /* print output the table */

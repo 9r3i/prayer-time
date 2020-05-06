@@ -27,7 +27,7 @@
   },
   "ext.ptime":{
     "name":"ptime",
-    "version":"1.5.1",
+    "version":"1.5.2",
     "type":"ext",
     "contains":[
       "ptime.php"
