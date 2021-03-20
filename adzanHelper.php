@@ -11,9 +11,10 @@
  *     -- must be located at cahyadsn directory
  * changes:
  *   o add method addWilayah as version 1.1.0
+ *   o add file HijriTraits.php as version 1.1.1
  */
 class adzanHelper{
-  const version='1.1.0';
+  const version='1.1.1';
   private $dir;
   private $wilayah;
   private $keys;
@@ -35,6 +36,7 @@ class adzanHelper{
     foreach([
       'TimeTraits.php',
       'TrigonometriTraits.php',
+      'HijriTraits.php',
       'Adzan.php',
       'NeoAdzan.php',
     ] as $file){
